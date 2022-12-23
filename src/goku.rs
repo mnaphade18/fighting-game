@@ -1,7 +1,23 @@
 use bevy::prelude::*;
+use crate::movable::Movable;
 
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(Timer);
+
+#[derive(Default)]
+pub enum PlayerState {
+    #[default]
+    Idle,
+    MoveAhead,
+    MoveBack,
+    Punch,
+}
+
+
+#[derive(Default, Component)]
+pub struct Player {
+    state: PlayerState,
+}
 
 pub struct GokuPlugin;
 
@@ -16,7 +32,7 @@ impl Plugin for GokuPlugin {
 fn spawn_goku(mut commands: Commands, asset_server: Res<AssetServer>, mut assets: ResMut<Assets<TextureAtlas>>) {
     let texture = asset_server.load("Goku.png");
 
-    let atlas = TextureAtlas::from_grid(texture, Vec2 { x: 95.0, y: 140.0 }, 4, 1, Some(Vec2::splat(0.0)), Some(Vec2 { x: 12.0, y: 0.0 }));
+    let atlas = TextureAtlas::from_grid(texture, Vec2 { x: 97.0, y: 120.0 }, 4, 1, Some(Vec2::splat(0.0)), Some(Vec2 { x: 10.0, y: 10.0 }));
 
     let atlas_handle = assets.add(atlas);
 
@@ -27,6 +43,8 @@ fn spawn_goku(mut commands: Commands, asset_server: Res<AssetServer>, mut assets
             ..default()
         },
         AnimationTimer(Timer::from_seconds(0.5, TimerMode::Repeating)),
+        Movable,
+        Player::default(),
     ));
 }
 
